@@ -26,16 +26,12 @@ const CarComponent = () => {
   const [selectedOwners, setSelectedOwners] = useState([]);
   const [selectedRTOs, setSelectedRTOs] = useState([]);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
-
-
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);  // State for toggling sidebar
-  // Assuming Cars is your car data
+  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
-
 
   const handleBudgetChange = (min, max) => {
     setMinBudget(min);
@@ -43,8 +39,7 @@ const CarComponent = () => {
   };
 
   const filteredCars = Cars.filter((car) => {
-    const carDiscount = parseInt(car.discount); // Convert discount string (e.g., "5%") to a number
-
+    const carDiscount = parseInt(car.discount);
     return (
       (car.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         car.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -58,58 +53,54 @@ const CarComponent = () => {
       (!selectedSeats || car.seats === selectedSeats) &&
       (selectedOwners.length === 0 || selectedOwners.includes(car.owners)) &&
       (selectedRTOs.length === 0 || selectedRTOs.includes(car.RTO)) &&
-      (!selectedDiscount || carDiscount >= selectedDiscount) // Filter discount correctly
+      (!selectedDiscount || carDiscount >= selectedDiscount)
     );
   });
 
   return (
     <div className="container mx-auto flex relative">
-    {/* Overlay */}
-    {isSidebarOpen && (
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+
       <div
-        className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-        onClick={toggleSidebar}
-      ></div>
-    )}
-
-    {/* Sidebar */}
-    <div
-      className={`fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transition-transform duration-300 ease-in-out z-50
-      ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:w-1/5`}
-    >
-      <button
-        onClick={toggleSidebar}
-        className="lg:hidden text-gray-700 text-2xl absolute top-4 right-4"
+        className={`fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transition-transform duration-300 ease-in-out z-50 overflow-y-auto
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:static lg:w-1/5`}
       >
-        ✖ {/* Close Icon */}
-      </button>
+        <button
+          onClick={toggleSidebar}
+          className="lg:hidden text-gray-700 text-2xl absolute top-4 right-4"
+        >
+          ✖
+        </button>
 
-      <BudgetFilter onBudgetChange={handleBudgetChange} />
-      <FuelFilter onFuelChange={setSelectedFuels} carData={Cars} />
-      <BodyTypeFilter onBodyTypeChange={setSelectedBodyType} carData={Cars} />
-      <TransmissionFilter onTransmissionChange={setSelectedTransmission} carData={Cars} />
-      <ColorFilter onColorChange={setSelectedColor} carData={Cars} />
-      <SeatsFilter onSeatsChange={setSelectedSeats} carData={Cars} />
-      <OwnerFilter onOwnerChange={setSelectedOwners} carData={Cars} />
-      <RTOFilter onRTOChange={setSelectedRTOs} carData={Cars} />
-      <DiscountFilter onDiscountChange={setSelectedDiscount} />
+        <BudgetFilter onBudgetChange={handleBudgetChange} />
+        <FuelFilter onFuelChange={setSelectedFuels} carData={Cars} />
+        <BodyTypeFilter onBodyTypeChange={setSelectedBodyType} carData={Cars} />
+        <TransmissionFilter onTransmissionChange={setSelectedTransmission} carData={Cars} />
+        <ColorFilter onColorChange={setSelectedColor} carData={Cars} />
+        <SeatsFilter onSeatsChange={setSelectedSeats} carData={Cars} />
+        <OwnerFilter onOwnerChange={setSelectedOwners} carData={Cars} />
+        <RTOFilter onRTOChange={setSelectedRTOs} carData={Cars} />
+        <DiscountFilter onDiscountChange={setSelectedDiscount} />
+      </div>
+
+      <div className="flex-1 p-4 relative z-10">
+        <button
+          onClick={toggleSidebar}
+          className="lg:hidden p-4 text-2xl text-gray-700 fixed top-20 left-4 z-50 bg-white rounded-full shadow-md"
+        >
+          &#9776;
+        </button>
+
+        <h1 className="text-3xl font-bold text-center my-6">Car Listings</h1>
+        <SearchBar onSearch={setSearchQuery} />
+        <CarList Cars={filteredCars} />
+      </div>
     </div>
-
-    {/* Main Content */}
-    <div className="flex-1 p-4 relative z-10">
-      {/* Hamburger Icon */}
-      <button
-        onClick={toggleSidebar}
-        className="lg:hidden p-4 text-2xl text-gray-700 fixed top-20 left-4 z-50 bg-white rounded-full shadow-md"
-      >
-        &#9776; {/* Hamburger Icon */}
-      </button>
-
-      <h1 className="text-3xl font-bold text-center my-6">Car Listings</h1>
-      <SearchBar onSearch={setSearchQuery} />
-      <CarList Cars={filteredCars} />
-    </div>
-  </div>
   );
 };
 
